@@ -1,0 +1,950 @@
+---
+title: "Final Project"
+author: "Jhansi Yama"
+date: "2023-12-08"
+output: pdf_document
+---
+
+```{r}
+# Set the working directory to the folder containing the CSV file
+setwd("C:/Users/yjlax/Downloads")
+
+# Read the CSV file into a data frame
+heartattack_dataset <- read.csv("heart_attack_prediction_dataset (1).csv")
+
+# Print the first few rows of the data to verify the import
+head(heartattack_dataset)
+
+
+```
+
+```{r}
+# Printing all the colomns
+column_names = names(heartattack_dataset)
+print(column_names)
+
+```
+
+```{r}
+#Dropping unnecessary column 
+heartattack_final <- subset(heartattack_dataset, select = -Patient.ID)
+
+# Print the first few rows of the modified dataset
+print(head(heartattack_final))
+
+```
+
+Checking null values:
+```{r}
+num_values <- sapply(heartattack_final, function(x) sum(is.na(x)))
+
+# Print the number of null values for each column
+print(num_values)
+
+```
+
+
+```{r}
+#Checking for datastructures of the dataset
+str(heartattack_final)
+```
+
+Exploratory Data Analysis (EDA) done to understand the data structure and its characteristics, like summary statistics and checking if the dataset contains any null values.
+
+```{r}
+# Summary statistics
+Numerical = heartattack_final[c("Age", "Cholesterol", "Systolic.Blood.Pressure", "Diastolic.Blood.Pressure","Heart.Rate", "Exercise.Hours.Per.Week","Stress.Level","Income","BMI","Triglycerides", "Physical.Activity.Days.Per.Week","Sleep.Hours.Per.Day")]
+summary(Numerical)
+
+```
+
+
+Detection of Outliers by using Box Plots Method :
+
+```{r}
+
+# Load necessary libraries
+library(ggplot2)
+library(scales)
+
+# List of continuous variables
+continuous_variables <- c("Age", "Cholesterol", "Systolic.Blood.Pressure", "Diastolic.Blood.Pressure","Heart.Rate", "Exercise.Hours.Per.Week","Stress.Level","Income","BMI","Triglycerides", "Physical.Activity.Days.Per.Week","Sleep.Hours.Per.Day")
+
+# Create box plots for each continuous variable to visualize outliers
+plots <- lapply(continuous_variables, function(variable) {
+  ggplot(heartattack_final, aes(x = "", y = !!sym(variable))) +
+    geom_boxplot(fill = "skyblue") +
+    labs(title = paste("Box Plot of", variable), x = "", y = variable) +
+    theme_minimal() +
+    theme(legend.position = "none")
+})
+
+# Display the plots
+plots
+
+
+```
+Interpretation:
+None of the continuous variables have outliers. The remaining variables are boolean and categorical.
+
+DATA VISUALIZATION :
+
+Histogram with respect to "Age":
+
+```{r}
+
+# Plot the histogram
+hist(heartattack_final$Age)
+
+
+
+```
+
+Histogram with respect to "Cholesterol": 
+
+```{r}
+
+hist(heartattack_final$Cholesterol)
+```
+
+
+Histogram with respect to "Systolic Blood Pressure": 
+
+```{r}
+hist(heartattack_final$Systolic.Blood.Pressure)
+
+```
+
+Histogram of "Diastolic Blood Pressure" : 
+
+```{r}
+hist(heartattack_final$Diastolic.Blood.Pressure)
+
+```
+
+Histogram of "Excercise Hours Per Week"
+
+```{r}
+# Correct the column name and then check the structure
+
+hist(heartattack_final$Exercise.Hours.Per.Week)
+
+
+```
+
+Histogram of "Sedentary Hours Per Day": 
+
+```{r}
+
+
+hist(heartattack_final$Sedentary.Hours.Per.Day)
+
+
+```
+
+Histogram with respect to "Income" :
+
+```{r}
+hist(heartattack_final$Income)
+
+
+```
+
+Histogram with respect to "BMI": 
+
+```{r}
+hist(heartattack_final$BMI)
+
+
+```
+
+Histogram with respect to "Triglycerides":
+
+```{r}
+hist(heartattack_final$Triglycerides)
+
+```
+
+Histogram with respect to "Sleep Hours Per Day":
+
+```{r}
+hist(heartattack_final$Sleep.Hours.Per.Day)
+
+```
+
+
+Pie Chart Representation for Discrete data:
+
+Pie chart to asses "Sex" :
+
+```{r}
+# Create a pie chart for Sex
+pie(table(heartattack_final$Sex),
+    main = "Distribution of Sex",
+    col = c("lightblue", "pink"),
+    labels = paste(names(table(heartattack_final$Sex)), "\n", table(heartattack_final$Sex), sep = ""))
+
+
+```
+
+Pie chart representation of "Diet" :
+
+```{r}
+# Create a pie chart for Diet
+pie(table(heartattack_final$Diet),
+    main = "Distribution of Diet",
+    labels = paste(names(table(heartattack_final$Diet)), "\n", table(heartattack_final$Diet), sep = ""))
+
+
+```
+
+Bar graph to asses "Diabetes" :
+
+```{r}
+table(heartattack_final$Diabetes)
+
+
+```
+
+```{r}
+# Create a barplot for Diabetes
+barplot(table(heartattack_final$Diabetes),
+        main = "Distribution of Diabetes",
+        col = "lightblue",
+        xlab = "Diabetes",
+        ylab = "Frequency")
+
+```
+
+
+
+
+Bar graph to asses "Family History" :
+
+```{r}
+table(heartattack_final$Family.History)
+```
+
+```{r}
+# Create a barplot for Family History
+barplot(table(heartattack_final$Family.History),
+        main = "Distribution of Family History",
+        col = "lightblue",
+        xlab = "Family History",
+        ylab = "Frequency")
+
+```
+
+
+Bar graph to asses "Smoking" :
+
+```{r}
+table(heartattack_final$Smoking)
+```
+
+```{r}
+# Create a barplot for Smoking
+barplot(table(heartattack_final$Smoking),
+        main = "Distribution of Smoking",
+        col = "lightblue",
+        xlab = "Smoking",
+        ylab = "Frequency")
+
+```
+
+Bar graph to asses "Obesity":
+
+```{r}
+table(heartattack_final$Obesity)
+
+```
+```{r}
+# Create a barplot for Obesity
+barplot(table(heartattack_final$Obesity),
+        main = "Distribution of Obesity",
+        col = "lightblue",
+        xlab = "Obesity",
+        ylab = "Frequency")
+
+```
+
+Bar graph to asses "Alcohol Consumption" :
+
+```{r}
+table(heartattack_final$Alcohol.Consumption)
+```
+
+
+```{r}
+
+# Create a barplot for Alcohol Consumption
+barplot(table(heartattack_final$Alcohol.Consumption),
+        main = "Distribution of Alcohol Consumption",
+        col = "lightblue",
+        xlab = "Alcohol Consumption",
+        ylab = "Frequency")
+
+```
+
+Bar graph to asses "Previous Heart Problems" :
+
+
+```{r}
+table(heartattack_final$Previous.Heart.Problems)
+```
+
+```{r}
+# Create a barplot for Previous Heart Problems
+barplot(table(heartattack_final$Previous.Heart.Problems),
+        main = "Distribution of Previous Heart Problems",
+        col = "lightblue",
+        xlab = "Previous Heart Problems",
+        ylab = "Frequency")
+
+
+```
+
+Bar graph to asses "Medication.Use" :
+
+```{r}
+table(heartattack_final$Medication.Use)
+```
+
+```{r}
+# Create a barplot for Medication Use
+barplot(table(heartattack_final$Medication.Use),
+        main = "Distribution of Medication Use",
+        col = "lightblue",
+        xlab = "Medication Use",
+        ylab = "Frequency")
+
+```
+
+Bar graph to asses "Country" :
+
+
+```{r}
+table(heartattack_final$Country)
+```
+
+
+```{r}
+# Select the top N countries based on frequency
+top_countries <- names(sort(table(heartattack_final$Country), decreasing = TRUE))[1:10]  # Adjust the number as needed
+
+# Create a barplot for the selected countries with pink color
+barplot(table(heartattack_final$Country)[top_countries],
+        main = "Top Countries in the Dataset",
+        col = "pink",  # Set the color to pink
+        xlab = "Country",
+        ylab = "Frequency")
+
+
+```
+
+Bar graph to asses "Continent" :
+
+```{r}
+table(heartattack_final$Continent)
+```
+
+
+```{r}
+# Create a barplot for Continent with pink color
+barplot(table(heartattack_final$Continent),
+        main = "Distribution of Continents",
+        col = "pink",
+        xlab = "Continent",
+        ylab = "Frequency")
+
+```
+
+Bar graph to asses "Hemisphere" :
+
+```{r}
+table(heartattack_final$Hemisphere)
+```
+
+
+```{r}
+# Create a barplot for Hemisphere with pink color
+barplot(table(heartattack_final$Hemisphere),
+        main = "Distribution of Hemispheres",
+        col = "pink",
+        xlab = "Hemisphere",
+        ylab = "Frequency")
+
+```
+
+Sampling
+
+```{r}
+# Set a seed for reproducibility
+set.seed(123)
+
+# Assuming 'your_data' is your dataset
+sampled_data <- heartattack_final[sample(nrow(heartattack_final)), ]
+
+# Print or view the shuffled data
+sampled_data
+```
+
+Correlation Analysis :
+
+Spearman Correlation Analysis: 
+
+With Age:
+```{r}
+cor_age = cor.test(sampled_data$Heart.Attack.Risk, sampled_data$Age, method = "spearman" )
+cor_age
+```
+Interpretation :
+With a p-value of 0.5473, which is greater than the common significance level of 0.05, there is no statistically significant evidence to reject the null hypothesis.
+Based on this analysis, we do not have sufficient evidence to conclude that there is a statistically significant correlation between "Heart.Attack.Risk" and "Age."
+The small magnitude of the correlation coefficient (rho = 0.00642925) further suggests a very weak positive relationship between the two variables. This means that, on average, as age increases, the risk of a heart attack may slightly increase.
+
+
+With Cholestrol
+```{r}
+cor_chole = cor.test(sampled_data$Heart.Attack.Risk, sampled_data$Cholesterol, method = "spearman" )
+cor_chole
+```
+Interpretation :
+With a p-value of 0.07124, which is slightly greater than the common significance level of 0.05, there is a borderline case for statistical significance.
+Based on this analysis, there is some evidence to suggest a potential correlation between "Heart.Attack.Risk" and "Cholesterol." However, it does not reach conventional levels of statistical significance.
+The positive correlation coefficient (rho = 0.01927134) suggests a very weak positive relationship between the two variables. This means that, on average, as cholesterol levels increase, the risk of a heart attack may slightly increase. 
+
+
+
+With Systolic Blood Pressure:
+```{r}
+cor_sysbp = cor.test(sampled_data$Heart.Attack.Risk, sampled_data$Systolic.Blood.Pressure, method = "spearman" )
+cor_sysbp
+```
+Interpretation :
+With a p-value of 0.08099, which is slightly greater than the common significance level of 0.05, there is a borderline case for statistical significance.
+Based on this analysis, there is some evidence to suggest a potential correlation between "Heart.Attack.Risk" and "Systolic.Blood.Pressure." However, it does not reach conventional levels of statistical significance.
+The positive correlation coefficient (rho = 0.01864158 ) suggests a very weak positive relationship between the two variables. This means that, on average, as systolic blood pressure increases, the risk of a heart attack may slightly increase.
+
+
+
+
+
+With Diastolic Blood Pressure : 
+
+```{r}
+cor_diasbp = cor.test(sampled_data$Heart.Attack.Risk, sampled_data$Diastolic.Blood.Pressure, method = "spearman" )
+cor_diasbp
+```
+Interpretation :
+With a p-value of 0.471, which is greater than the common significance level of 0.05, there is no statistically significant evidence to reject the null hypothesis.
+Based on this analysis, we do not have sufficient evidence to conclude that there is a statistically significant correlation between "Heart.Attack.Risk" and "Diastolic.Blood.Pressure."
+The small magnitude of the correlation coefficient (rho = -0.007700842) further suggests a very weak or negligible negative relationship between the two variables.
+
+
+
+With Exercise Hours Per Week :
+
+```{r}
+cor_ex = cor.test(sampled_data$Heart.Attack.Risk, sampled_data$Exercise.Hours.Per.Week, method = "spearman" )
+cor_ex
+```
+Interpretation :
+With a p-value of 0.297, which is greater than the common significance level of 0.05, there is no statistically significant evidence to reject the null hypothesis.
+Based on this analysis, we do not have sufficient evidence to conclude that there is a statistically significant correlation between "Heart.Attack.Risk" and "Exercise.Hours.Per.Week."
+The small magnitude of the correlation coefficient (rho = 0.01114134) further suggests a very weak or negligible positive relationship between the two variables. This means that, on average, as the number of exercise hours per week increases, the risk of a heart attack may slightly increase, but the association is not statistically significant in this analysis.
+
+
+
+With Heart Rate:
+
+```{r}
+
+cor_hr = cor.test(sampled_data$Heart.Attack.Risk, sampled_data$Heart.Rate, method = "spearman" )
+cor_hr
+```
+Interpretation : 
+With a p-value of 0.6802, which is greater than the common significance level of 0.05, there is no statistically significant evidence to reject the null hypothesis.
+Based on this analysis, we do not have sufficient evidence to conclude that there is a statistically significant correlation between "Heart.Attack.Risk" and "Heart.Rate."
+The small magnitude of the correlation coefficient (rho = -0.00440357) further suggests a very weak or negligible negative relationship between the two variables.
+
+
+
+
+
+With Sedentary Hours Per Day :
+```{r}
+cor_sed = cor.test(sampled_data$Heart.Attack.Risk, sampled_data$Sedentary.Hours.Per.Day, method = "spearman" )
+cor_sed
+```
+Interpretation :
+With a p-value of 0.5924, which is greater than the common significance level of 0.05, there is no statistically significant evidence to reject the null hypothesis.
+Based on this analysis, we do not have sufficient evidence to conclude that there is a statistically significant correlation between "Heart.Attack.Risk" and "Sedentary.Hours.Per.Day."
+The small magnitude of the correlation coefficient (rho = -0.005719089) further suggests a very weak relationship between the two variables. This means that, on average, as the number of sedentary hours per day increases, the risk of a heart attack may slightly increase, but the association is not statistically significant in this analysis.
+
+
+
+With BMI:
+```{r}
+cor_bmi = cor.test(sampled_data$Heart.Attack.Risk, sampled_data$BMI, method = "spearman" )
+cor_bmi
+```
+Interpretation : 
+With a p-value of 0.9915, which is much greater than the common significance level of 0.05, there is no statistically significant evidence to reject the null hypothesis.
+Based on this analysis, we do not have sufficient evidence to conclude that there is a statistically significant correlation between "Heart.Attack.Risk" and "BMI."
+
+
+
+With Triglycerides:
+```{r}
+cor_tri = cor.test(sampled_data$Heart.Attack.Risk, sampled_data$Triglycerides, method = "spearman" )
+cor_tri
+```
+Interpretation : 
+With a p-value of 0.3279, which is slightly greater than the common significance level of 0.05, there is no statistically significant evidence to reject the null hypothesis.
+Based on this analysis, we do not have sufficient evidence to conclude that there is a statistically significant correlation between "Heart.Attack.Risk" and "Triglycerides."
+The small magnitude of the correlation coefficient (rho = 0.01045166) further suggests a very weak or negligible positive relationship between the two variables. This means that, on average, as the levels of triglycerides increase, the risk of a heart attack may slightly increase, but the association is not statistically significant in this analysis.
+
+
+With Physical Activity Days Per Week :
+```{r}
+cor_phys = cor.test(sampled_data$Heart.Attack.Risk, sampled_data$Physical.Activity.Days.Per.Week, method = "spearman" )
+cor_phys
+```
+Interpretation :
+
+With a p-value of 0.6328, which is much greater than the common significance level of 0.05, there is no statistically significant evidence to reject the null hypothesis.
+Based on this analysis, we do not have sufficient evidence to conclude that there is a correlation between "Heart.Attack.Risk" and "Physical.Activity.Days.Per.Week."
+The small magnitude of the correlation coefficient (rho = -0.005104639) further suggests a very weak or negligible relationship between the two variables.
+
+
+
+With Sleep hours per day: 
+```{r}
+cor_sleep = cor.test(sampled_data$Heart.Attack.Risk, sampled_data$Sleep.Hours.Per.Day, method = "spearman" )
+cor_sleep
+```
+Interpretation :
+
+With a p-value of 0.08379, which is greater than the common significance level of 0.05 but close to it, there is a borderline case for statistical significance.
+Based on this analysis, we do not have strong evidence to reject the null hypothesis at the conventional significance level. However, it's worth noting that the p-value is close to 0.05, indicating that there might be a weak or marginal association.
+The negative correlation coefficient (rho = -0.0184723) suggests a very weak negative relationship between "Heart.Attack.Risk" and "Sleep.Hours.Per.Day." This means that, on average, as the number of hours of sleep per day decreases, the risk of heart attack may slightly increase.
+
+
+
+
+Mann Whitney U test:
+We used the Mann-Whitney U test (also known as the Wilcoxon rank-sum test), as we have will check association between a single independent numerical variable and a single dependent categorical variable ("Heart Attack Risk"), and the independent variable is not normally distributed. This non-parametric test is suitable for comparing the distribution of a numerical variable between two groups, where one group corresponds to the presence (1) and the other to the absence (0) of the outcome.
+
+The null hypothesis of the Mann-Whitney U test is that there is no difference in the distributions of the two groups. If the p-value is typically less than 0.05, we may reject the null hypothesis and conclude that there is a significant difference in the distributions of numerical variables between the groups with and without heart attacks.
+
+Additionally, this test does not assume normality, making it suitable for non-normally distributed data.
+
+
+```{r}
+wilcox.test(Age ~ Heart.Attack.Risk, data = sampled_data)
+```
+Interpretation:
+The p-value of 0.5473 indicates that there is not enough evidence to reject the null hypothesis. Therefore, we do not have sufficient statistical evidence to conclude that there is a significant difference in age between individuals with a "Heart.Attack.Risk" of 0 and those with a "Heart.Attack.Risk" of 1. 
+
+```{r}
+wilcox.test(Cholesterol ~ Heart.Attack.Risk, data = sampled_data)
+```
+Interpretation:
+The p-value of 0.07125 indicates that, at the conventional significance level (e.g., 0.05), there is not enough evidence to reject the null hypothesis. Therefore, based on this test, we do not have sufficient evidence to conclude that there is a significant difference in Cholesterol levels between individuals with Heart Attack Risk 0 and Heart Attack Risk 1.
+
+```{r}
+wilcox.test(Systolic.Blood.Pressure ~ Heart.Attack.Risk, data = sampled_data)
+
+```
+ Interpretation:
+With a p-value of 0.08099, which is greater than the commonly used significance level of 0.05, there is not enough evidence to reject the null hypothesis. Therefore, we do not have sufficient evidence to conclude that there is a significant difference in systolic blood pressure between individuals with and without a heart attack. 
+
+```{r}
+wilcox.test(Diastolic.Blood.Pressure ~ Heart.Attack.Risk, data = sampled_data)
+
+```
+Interpretation:
+With a p-value of 0.471, which is greater than the commonly used significance level of 0.05, there is not enough evidence to reject the null hypothesis. Therefore, we do not have sufficient evidence to conclude that there is a significant difference in diastolic blood pressure between individuals with and without a heart attack.
+
+
+```{r}
+wilcox.test(Heart.Rate ~ Heart.Attack.Risk, data = sampled_data)
+
+```
+Interpretation:
+With a p-value of 0.6802, which is greater than the commonly used significance level of 0.05, there is not enough evidence to reject the null hypothesis. Therefore, we do not have sufficient evidence to conclude that there is a significant difference in heart rate between individuals with and without a heart attack.
+
+
+```{r}
+wilcox.test(Exercise.Hours.Per.Week ~ Heart.Attack.Risk, data = sampled_data)
+
+```
+Interpretation:
+With a p-value of 0.297, which is greater than the commonly used significance level of 0.05, there is not enough evidence to reject the null hypothesis. Therefore, we do not have sufficient evidence to conclude that there is a significant difference in exercise hours per week between individuals with and without a heart attack.
+
+```{r}
+wilcox.test(Stress.Level ~ Heart.Attack.Risk, data = sampled_data)
+
+```
+Interpretation:
+With a p-value of 0.7001, which is greater than the commonly used significance level of 0.05, there is not enough evidence to reject the null hypothesis. Therefore, we do not have sufficient evidence to conclude that there is a significant difference in stress level between individuals with and without a heart attack.
+
+```{r}
+wilcox.test(Sedentary.Hours.Per.Day ~ Heart.Attack.Risk, data = sampled_data)
+
+```
+Interpretation:
+With a p-value of 0.5924, which is greater than the commonly used significance level of 0.05, there is not enough evidence to reject the null hypothesis. Therefore, we do not have sufficient evidence to conclude that there is a significant difference in sedentary hours per day between individuals with and without a heart attack.
+
+
+```{r}
+wilcox.test(Income ~ Heart.Attack.Risk, data = sampled_data)
+
+```
+Interpretation:
+With a p-value of 0.3696, which is greater than the commonly used significance level of 0.05, there is not enough evidence to reject the null hypothesis. Therefore, we do not have sufficient evidence to conclude that there is a significant difference in income between individuals with and without a heart attack.
+
+```{r}
+wilcox.test(BMI ~ Heart.Attack.Risk, data = sampled_data)
+
+```
+Interpretation:
+With a p-value of 0.9915, which is greater than the commonly used significance level of 0.05, there is not enough evidence to reject the null hypothesis. Therefore, we do not have sufficient evidence to conclude that there is a significant difference in BMI between individuals with and without a heart attack.
+
+```{r}
+wilcox.test(Triglycerides ~ Heart.Attack.Risk, data = sampled_data)
+
+```
+Interpretation:
+With a p-value of 0.3279, which is greater than the commonly used significance level of 0.05, there is not enough evidence to reject the null hypothesis. Therefore, we do not have sufficient evidence to conclude that there is a significant difference in triglycerides between individuals with and without a heart attack.
+```{r}
+wilcox.test(Physical.Activity.Days.Per.Week ~ Heart.Attack.Risk, data = sampled_data)
+
+```
+Interpretation:
+With a p-value of 0.6328, which is greater than the commonly used significance level of 0.05, there is not enough evidence to reject the null hypothesis. Therefore, we do not have sufficient evidence to conclude that there is a significant difference in physical activity days per week between individuals with and without a heart attack.
+```{r}
+wilcox.test(Sleep.Hours.Per.Day ~ Heart.Attack.Risk, data = sampled_data)
+
+```
+Interpretation:
+With a p-value of 0.4214, which is greater than the commonly used significance level of 0.05, there is not enough evidence to reject the null hypothesis. Therefore, we do not have sufficient evidence to conclude that there is a significant difference in sleep hours per days between individuals with and without a heart attack.
+
+
+
+
+
+Chi square : 
+
+With Sex :
+```{r}
+table_sex = table(sampled_data$Heart.Attack.Risk, sampled_data$Sex)
+table_sex
+chisq.test(table_sex)
+```
+Interpretation :
+With a p-value of 0.7906, which is greater than the common significance level of 0.05, there is no statistically significant evidence to reject the null hypothesis.
+Based on this analysis, we do not have sufficient evidence to conclude that there is a statistically significant association between "Sex" and "Heart Attack Risk."
+
+
+With Diet:
+```{r}
+table_diet = table(sampled_data$Heart.Attack.Risk, sampled_data$Diet)
+table_diet
+chisq.test(table_diet)
+```
+Interpretation :
+With a p-value of 0.6204, which is greater than the common significance level of 0.05, there is no statistically significant evidence to reject the null hypothesis.
+Based on this analysis, we do not have sufficient evidence to conclude that there is a statistically significant association between "Diet" and "Heart Attack Risk."
+
+
+With Diabetes :
+```{r}
+table_diabet= table(sampled_data$Heart.Attack.Risk, sampled_data$Diabetes)
+table_diabet
+chisq.test(table_diabet)
+```
+Interpretation :
+With a p-value of 0.112, which is greater than the common significance level of 0.05, there is no statistically significant evidence to reject the null hypothesis.
+Based on this analysis, we do not have sufficient evidence to conclude that there is a statistically significant association between "Diabetes" and "Heart Attack Risk."
+
+
+With Family History :
+
+```{r}
+table_fh = table(sampled_data$Heart.Attack.Risk, sampled_data$Family.History)
+table_fh
+chisq.test(table_fh)
+```
+Interpretation :
+With a p-value of 0.8947, which is much greater than the common significance level of 0.05, there is no statistically significant evidence to reject the null hypothesis.
+Based on this analysis, we do not have sufficient evidence to conclude that there is a statistically significant association between "Family History of Heart Disease" and "Heart Attack Risk."
+
+With Smoking : 
+```{r}
+table_smok = table(sampled_data$Heart.Attack.Risk, sampled_data$Smoking)
+table_smok
+chisq.test(table_smok)
+```
+Interpretation :
+With a p-value of 0.7319, which is greater than the common significance level of 0.05, there is no statistically significant evidence to reject the null hypothesis.
+Based on this analysis, we do not have sufficient evidence to conclude that there is a statistically significant association between "Smoking" and "Heart Attack Risk."
+
+
+
+With Obesity:
+```{r}
+table_obs = table(sampled_data$Heart.Attack.Risk, sampled_data$Obesity)
+table_obs
+chisq.test(table_obs)
+```
+
+Interpretation :
+With a p-value of 0.2208, which is greater than the common significance level of 0.05, there is no statistically significant evidence to reject the null hypothesis.
+Based on this analysis, we do not have sufficient evidence to conclude that there is a statistically significant association between "Observation" and "Heart Attack Risk."
+
+
+
+With Alcohol Consumption :
+```{r}
+table_ac = table(sampled_data$Heart.Attack.Risk, sampled_data$Alcohol.Consumption)
+table_ac
+chisq.test(table_ac)
+```
+Interpretation :
+With a p-value of 0.2051, which is greater than the common significance level of 0.05, there is no statistically significant evidence to reject the null hypothesis.
+Based on this analysis, we do not have sufficient evidence to conclude that there is a statistically significant association between "Alcohol Consumption" and "Heart Attack Risk."
+
+
+With Previous Heart Problems:
+
+```{r}
+table_pre = table(sampled_data$Heart.Attack.Risk, sampled_data$Previous.Heart.Problems)
+table_pre
+chisq.test(table_pre)
+```
+Interpretation :
+With a p-value of 0.9973, which is much greater than the common significance level of 0.05, there is no statistically significant evidence to reject the null hypothesis.
+Based on this analysis, we do not have sufficient evidence to conclude that there is a statistically significant association between "Previous Heart Attack" and "Heart Attack Risk."
+
+
+With Medication Use :
+```{r}
+table_meduse = table(sampled_data$Heart.Attack.Risk, sampled_data$Medication.Use)
+table_meduse
+chisq.test(table_meduse)
+```
+
+Interpretation :
+With a p-value of 0.8518, which is much greater than the common significance level of 0.05, there is no statistically significant evidence to reject the null hypothesis.
+Based on this analysis, we do not have sufficient evidence to conclude that there is a statistically significant association between "Medication Usage" and "Heart Attack Risk."
+
+
+
+
+Spearman Correlation Analysis :
+
+```{r}
+
+
+# Select only numeric variables
+numeric_vars <- heartattack_pred[sapply(heartattack_pred, is.numeric)]
+
+# Calculate the Spearman correlation matrix for numeric variables
+cor_matrix_spearman <- cor(numeric_vars, method = "spearman")
+
+# Install and load necessary packages
+# install.packages("corrplot")
+# install.packages("RColorBrewer")
+library(corrplot)
+library(RColorBrewer)
+
+# Increase the plot size and reduce font size
+par(mfrow = c(1, 1), mar = c(1, 1, 3, 1))  # Set the plot layout and margins
+
+# Specify the dimensions of the plot
+width <- ncol(cor_matrix_spearman) * 50
+height <- ncol(cor_matrix_spearman) * 50
+options(repr.plot.width = width, repr.plot.height = height)
+
+corrplot(
+  cor_matrix_spearman,
+  method = "color",
+  col = colorRampPalette(c("blue", "white", "red"))(20),
+  tl.col = "black",
+  tl.srt = 45,
+  addCoef.col = "black",
+  number.cex = 0.5,  # Reduced font size for variable names
+  title = "Spearman Correlation Heatmap",
+  title.cex = 5.0  # Increased title font size
+)
+
+
+
+```
+
+Interpretation: Correlation with Heart attack risk
+Positive correlation : Age, Cholesterol, Systolic Blood Pressure, Diabetes, Exercise Hours Per Week, Income, Triglycerides, Previous heart problems, Medication use, 
+                                      
+Negative correlation : Heart rate, Family History, Smoking, Stress level, BMI, Physical Activity Days per Week, Sleep hours Per day, Diastolic blood pressure, obesity, Alcohol consumption, Sedentary hours per day
+
+```{r}
+# Create correlation matrix
+numeric_vars <- heartattack_final[sapply(heartattack_final, is.numeric)]
+correlation_matrix <- cor(numeric_vars)
+
+# Display the correlation matrix
+print(correlation_matrix)
+```
+
+
+Logistic Regression:
+
+Prepare the Data for Logistic Regression:
+```{r}
+# Convert categorical variables to factors
+sampled_data$Sex <- as.factor(sampled_data$Sex)
+sampled_data$Diet <- as.factor(sampled_data$Diet)
+sampled_data$Diabetes <- as.factor(sampled_data$Diabetes)
+sampled_data$Family.History <- as.factor(sampled_data$Family.History)
+sampled_data$Smoking<- as.factor(sampled_data$Smoking)
+sampled_data$Obesity <- as.factor(sampled_data$Obesity)
+sampled_data$Alcohol.Consumption <- as.factor(sampled_data$Alcohol.Consumption)
+sampled_data$Previous.Heart.Problems <- as.factor(sampled_data$Previous.Heart.Problems)
+sampled_data$Medication.Use <- as.factor(sampled_data$Medication.Use)
+sampled_data$Continent <- as.factor(sampled_data$Continent)
+sampled_data$Hemisphere <- as.factor(sampled_data$Hemisphere)
+sampled_data$Continent <- as.factor(sampled_data$Continent)
+# Create a binary response variable for logistic regression
+# Assuming 1 represents a positive outcome (heart attack risk) and 0 represents a negative outcome
+sampled_data$Heart.Attack.Risk <- as.factor(sampled_data$Heart.Attack.Risk)
+sampled_data$Heart.Attack.Risk
+
+```
+
+Logistic analysis with positive correlation variables:
+
+```{r}
+# Clean column names
+colnames(sampled_data) <- make.names(colnames(sampled_data))
+
+# Fit the logistic regression model
+model1 <- glm(Heart.Attack.Risk ~ Age+ Cholesterol+Systolic.Blood.Pressure + Diabetes + Exercise.Hours.Per.Week + Income+ Triglycerides+Previous.Heart.Problems +Medication.Use ,
+              data = sampled_data, family = binomial)
+
+# Display a summary of the model
+summary(model1)
+```
+
+Interpretation:
+1. **Age (Estimate: 6.625e-04):**
+   - The coefficient for Age is positive (0.0006625), indicating that for a one-unit increase in age, the log-odds of the heart attack risk increases by 0.0006625. However, this effect is not statistically significant (p = 0.5279).
+
+2. **Cholesterol (Estimate: 5.026e-04):**
+   - The coefficient for Cholesterol is positive (0.0005026), suggesting that higher cholesterol levels are associated with an increase in the log-odds of heart attack risk. This effect is marginally significant (p = 0.0685).
+
+3. **Systolic Blood Pressure (Estimate: 1.476e-03):**
+   - The coefficient for Systolic Blood Pressure is positive (0.001476), indicating that higher systolic blood pressure is associated with an increase in the log-odds of heart attack risk. This effect is marginally significant (p = 0.0812).
+
+4. **Diabetes1 (Estimate: 7.770e-02):**
+   - The coefficient for Diabetes1 is positive (0.0777), suggesting that having diabetes is associated with an increase in the log-odds of heart attack risk. However, this effect is marginally significant (p = 0.0982).
+
+5. **Exercise Hours Per Week (Estimate: 4.044e-03):**
+   - The coefficient for Exercise Hours Per Week is positive (0.004044), indicating that more hours of exercise per week are associated with an increase in the log-odds of heart attack risk. However, this effect is not statistically significant (p = 0.2945).
+
+6. **Income (Estimate: 2.493e-07):**
+   - The coefficient for Income is positive (0.0000002493), suggesting a very small positive association between income and the log-odds of heart attack risk. However, this effect is not statistically significant (p = 0.3678).
+
+7. **Triglycerides (Estimate: 9.521e-05):**
+   - The coefficient for Triglycerides is positive (0.00009521), suggesting that higher triglyceride levels are associated with an increase in the log-odds of heart attack risk. However, this effect is not statistically significant (p = 0.3395).
+
+8. **Previous Heart Problems1 (Estimate: 3.127e-03):**
+   - The coefficient for Previous Heart Problems1 is positive (0.003127), suggesting that individuals with a history of previous heart problems have higher log-odds of heart attack risk. However, this effect is not statistically significant (p = 0.9441).
+
+9. **Medication Use1 (Estimate: 1.054e-02):**
+   - The coefficient for Medication Use1 is positive (0.01054), indicating that individuals on medication have higher log-odds of heart attack risk. However, this effect is not statistically significant (p = 0.8131).
+
+In summary, the regression analysis suggests potential associations between age, cholesterol, systolic blood pressure, diabetes, exercise hours, and heart attack risk. However, some of these associations are marginally significant, emphasizing the need for further investigation and considering the limitations of the study.
+
+Logistic regression analysis with negative correlation variables:
+
+```{r}
+# Clean column names
+colnames(sampled_data) <- make.names(colnames(sampled_data))
+
+# Fit the logistic regression model
+model2 <- glm(Heart.Attack.Risk ~ Family.History + Smoking + Obesity + Alcohol.Consumption + Stress.Level+ Diastolic.Blood.Pressure + Heart.Rate +
+               Sedentary.Hours.Per.Day  + BMI +
+               + Physical.Activity.Days.Per.Week + Sleep.Hours.Per.Day,
+              data = sampled_data, family = binomial)
+
+# Display a summary of the model
+summary(model2)
+```
+Interpretation:
+
+1. **Family.History1:** The coefficient is -0.006, suggesting a slight decrease in the log-odds of experiencing a heart attack for individuals with a family history compared to those without. However, this effect is not statistically significant (p = 0.893).
+
+2. **Smoking1:** The coefficient is -0.027, indicating a decrease in the log-odds of a heart attack for smokers compared to non-smokers, but it is not statistically significant (p = 0.708).
+
+3. **Obesity1:** The coefficient is -0.058, suggesting a decrease in the log-odds of a heart attack for individuals with obesity compared to those without. However, this effect is not statistically significant (p = 0.197).
+
+4. **Alcohol.Consumption1:** The coefficient is -0.060, indicating a decrease in the log-odds of a heart attack for individuals who consume alcohol compared to non-drinkers. This effect is not statistically significant (p = 0.184).
+
+5. **Stress.Level:** The coefficient is -0.003, suggesting a small decrease in the log-odds of a heart attack for individuals with higher stress levels. However, this effect is not statistically significant (p = 0.682).
+
+6. **Diastolic.Blood.Pressure:** The coefficient is -0.001, indicating a small decrease in the log-odds of a heart attack for each unit increase in diastolic blood pressure. However, this effect is not statistically significant (p = 0.465).
+
+7. **Heart.Rate:** The coefficient is -0.0004, suggesting a small decrease in the log-odds of a heart attack for each additional heartbeat per minute. However, this effect is not statistically significant (p = 0.689).
+
+8. **Sedentary.Hours.Per.Day:** The coefficient is -0.0035, indicating a small decrease in the log-odds of a heart attack for each additional hour of sedentary activity per day. However, this effect is not statistically significant (p = 0.587).
+
+9. **BMI:** The coefficient is -0.000008, suggesting a very small decrease in the log-odds of a heart attack for each additional unit of BMI. This effect is not statistically significant (p = 0.998).
+
+10. **Physical.Activity.Days.Per.Week:** The coefficient is -0.0042, indicating a small decrease in the log-odds of a heart attack for each additional day of physical activity per week. However, this effect is not statistically significant (p = 0.671).
+
+11. **Sleep.Hours.Per.Day:** The coefficient is -0.0195, suggesting a decrease in the log-odds of a heart attack for individuals with more sleep hours per day. This effect is marginally significant (p = 0.083).
+
+In summary, while some coefficients suggest potential associations, many are not statistically significant. Further research and larger sample sizes may be needed to draw robust conclusions.
+
+
+```{r}
+# Convert categorical variables to factors
+sampled_data$Continent <- as.factor(sampled_data$Continent)
+sampled_data$Hemisphere <- as.factor(sampled_data$Hemisphere)
+
+# Fit a multiple regression model
+model <- glm(Heart.Attack.Risk ~ Continent + Hemisphere, data = sampled_data, family = binomial)
+
+# Display the summary of the regression model
+summary(model)
+
+
+```
+Interpretation:
+
+1. **Intercept:**
+   - The intercept is -0.478, representing the log-odds of the baseline risk when all other predictors (Continent and Hemisphere) are zero.
+
+2. **Continent and Hemisphere:**
+   - **ContinentAsia:** The coefficient is -0.124, suggesting a decrease in the log-odds of the outcome for individuals in Asia compared to the reference category (which is not explicitly shown here).
+   - **ContinentAustralia:** The coefficient is 0.029, indicating a slight increase in the log-odds of the outcome for individuals in Australia compared to the reference category.
+   - **ContinentEurope:** The coefficient is -0.113, suggesting a decrease in the log-odds of the outcome for individuals in Europe compared to the reference category.
+   - **ContinentNorth America:** The coefficient is -0.026, indicating a slight decrease in the log-odds of the outcome for individuals in North America compared to the reference category.
+   - **ContinentSouth America:** The coefficient is 0.014, indicating a slight increase in the log-odds of the outcome for individuals in South America compared to the reference category.
+   - **HemisphereSouthern Hemisphere:** The coefficient is -0.123, suggesting a decrease in the log-odds of the outcome for individuals in the Southern Hemisphere compared to the reference category.
+
+
+```{r}
+
+# Fit the logistic regression model
+model3 <- glm(Heart.Attack.Risk ~ Age + Cholesterol+ Alcohol.Consumption + Family.History + Stress.Level + BMI,
+              data = sampled_data, family = binomial)
+
+# Display a summary of the model
+summary(model3)
+
+```
+
+
