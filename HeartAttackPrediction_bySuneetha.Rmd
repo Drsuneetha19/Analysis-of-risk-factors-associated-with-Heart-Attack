@@ -1,6 +1,6 @@
 ---
 title: "Final Project"
-author: "Jhansi Yama"
+author: "Suneetha Naidu Mekala"
 date: "2023-12-08"
 output: pdf_document
 ---
